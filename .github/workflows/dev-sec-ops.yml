@@ -32,7 +32,6 @@ jobs:
         working-directory: ./client
         run: npm audit --production --audit-level=high
       
-      # Updated SonarCloud scan with required properties
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v5.0.0 #SonarSource/sonarcloud-github-action@master
         env:
