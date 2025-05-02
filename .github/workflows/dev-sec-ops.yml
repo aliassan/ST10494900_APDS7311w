@@ -32,11 +32,18 @@ jobs:
         working-directory: ./client
         run: npm audit --production --audit-level=high
       
+      # Updated SonarCloud scan with required properties
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5.0.0 #SonarSource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=your_project_key
+            -Dsonar.organization=your_org_name
+            -Dsonar.sources=.
+            -Dsonar.javascript.node.version=18
 
   backend-verify:
     needs: security-checks
