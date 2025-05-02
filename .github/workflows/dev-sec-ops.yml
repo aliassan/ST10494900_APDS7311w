@@ -40,8 +40,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
-            -Dsonar.projectKey=your_project_key
-            -Dsonar.organization=your_org_name
+            -Dsonar.projectKey=aliassan_ST10494900_APDS7311w
+            -Dsonar.organization=aliassan
             -Dsonar.sources=.
             -Dsonar.javascript.node.version=18
 
