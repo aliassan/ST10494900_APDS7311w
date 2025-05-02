@@ -30,7 +30,7 @@ jobs:
         
       - name: Run npm audit for frontend
         working-directory: ./client
-        run: npm audit --production
+        run: npm audit --production --audit-level=high
       
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
