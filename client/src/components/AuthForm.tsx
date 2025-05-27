@@ -120,13 +120,6 @@ const AuthForm: React.FC<AuthFormProps> = ({ defaultMode = 'login' }) => {
     const sanitizedFullName = mode === 'register' ? sanitizeInput(fullName) : '';
     const sanitizedIdNumber = mode === 'register' ? sanitizeInput(idNumber) : '';
 
-    console.log('Sanitized Inputs:', {
-      sanitizedAccountNumber,
-      sanitizedPassword,
-      sanitizedFullName,
-      sanitizedIdNumber,
-    });
-
     // Required field validation
     if (!sanitizedAccountNumber) errors.accountNumber = 'Account number is required';
     if (!sanitizedPassword) errors.password = 'Password is required';
