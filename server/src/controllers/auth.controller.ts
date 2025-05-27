@@ -103,8 +103,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
 
     console.log("User found: ", decryptedUser);
 
-    // res.status(200).json(decryptedUser);
-    //Create JWT for the user and send to the fron-end
+    //Create JWT with 15m expiry for the user and send to the fron-end
     const secretKey = process.env.SECRET_KEY as string;
     const authToken = jwt.sign({ accountNumber }, secretKey, { expiresIn: "15m" });
 
