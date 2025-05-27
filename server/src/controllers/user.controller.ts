@@ -120,13 +120,6 @@ export const addUser = async (req: Request, res: Response) => {
 
     console.log("Sanitized & Encrypted Data: ", { ...encryptedData });
 
-    console.log("Decrypted Data: ", {
-      fullName: encryptedData.fullName,
-      accountNumber: encryptedData.accountNumber,
-      idNumber: utils.decryptWithAES(encryptedData.idNumber),
-      passwordHash: bcrypt.compareSync(sanitizedData.password, encryptedData.passwordHash)
-    })
-
     // Step 13: Store Data
     const newUser = await prisma.user.create({
       data: {
