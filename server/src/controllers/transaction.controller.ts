@@ -4,8 +4,10 @@ import crypto from "crypto";
 
 export const getTransactions = async (req: Request, res: Response) => {
   //check if userAddress property is set
-  const accountNumber = (req as any).address;
+  const accountNumber = (req as any).accountNumber;
   const { role } = req.query
+
+  console.log("accountNumber: ", accountNumber);
 
   try {
     //retrieve notification
@@ -28,7 +30,7 @@ export const getTransactions = async (req: Request, res: Response) => {
           userId: user.id
         }
       })
-
+      console.log("transactions: ", transactions);
       res.status(200).json(transactions)
     }
   } catch (error) {
