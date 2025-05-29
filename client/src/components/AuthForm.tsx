@@ -159,7 +159,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ defaultMode = 'login' }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validate()) return;
+    // if (!validate()) return;
     
     // Use sanitized values for submission
     const sanitizedAccountNumber = sanitizeInput(accountNumber);
@@ -168,6 +168,8 @@ const AuthForm: React.FC<AuthFormProps> = ({ defaultMode = 'login' }) => {
     if (mode === 'login') {
       await login(sanitizedAccountNumber, sanitizedPassword, rememberMe);
     } else {
+      if (!validate()) return;
+      
       const sanitizedFullName = sanitizeInput(fullName);
       const sanitizedIdNumber = sanitizeInput(idNumber);
       
