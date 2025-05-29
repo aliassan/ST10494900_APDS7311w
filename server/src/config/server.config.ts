@@ -10,7 +10,7 @@ import { httpsOptions } from "./https.config"
 //#region routing modules
 import userRoutes from "../routes/user.routes";
 import authRoutes from "../routes/auth.routes";
-// import notificationRoutes from "../routes/notificationRoute";
+import transactionRoutes from "../routes/transaction.route";
 //#endregion routing modules
 
 import { authorizeUser } from "../middleware/auth.middleware";
@@ -28,7 +28,7 @@ class Server {
     this.paths = {
       user: "/api/user/",
       auth: "/api/auth/",
-      transaction: "/api/transation/"
+      transaction: "/api/transaction/"
     };
     
     this.port = parseInt(process.env.PORT as string) || 3000;
@@ -107,7 +107,7 @@ class Server {
     this.app.use(this.paths.auth, authLimiter, authRoutes);
     // Regular routes
     this.app.use(this.paths.user, userRoutes);
-    // this.app.use(this.paths.notification, notificationRoutes);
+    this.app.use(this.paths.transaction, transactionRoutes);
   }
 
   public listen() {
