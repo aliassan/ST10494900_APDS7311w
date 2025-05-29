@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
+import { fetchTransactions } from '@/services/transactionService';
 import {
   Card,
   CardContent,
@@ -90,6 +91,28 @@ const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [transactions, setTransactions] = useState(mockTransactions);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Fetch transactions on component mount
+  useEffect(() => {
+    if (user?.id) {
+      loadTransactions();
+    }
+  }, [user?.id]);
+
+  const loadTransactions = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchTransactions(user.id);
+      setTransactions(data);
+    } catch (err) {
+      setError('Failed to load transactions. Please try again.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Refresh transaction data (simulated)
   const refreshTransactions = () => {
