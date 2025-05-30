@@ -5,6 +5,6 @@ import { authorizeUser } from "../middleware/auth.middleware";
 const transactionRoute = express.Router()
 
 transactionRoute.get('/', authorizeUser, getTransactions)
-transactionRoute.put('/:id', authorizeUser, addTransaction)
+transactionRoute.post('/', authorizeUser, addTransaction)
 
 export default transactionRoute
