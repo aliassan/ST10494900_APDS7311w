@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -48,6 +48,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { fetchTransactions } from '@/services/transactionService';
 
 // Mock transaction data
 const mockTransactions = [
@@ -165,7 +166,7 @@ const formatCurrency = (amount: number, currency: string) => {
 type Transaction = typeof mockTransactions[0];
 
 const VerificationPortal: React.FC = () => {
-  const [transactions, setTransactions] = useState(mockTransactions);
+  const [transactions, setTransactions] = useState(/*mockTransactions*/[]);
   const [isLoading, setIsLoading] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -174,6 +175,43 @@ const VerificationPortal: React.FC = () => {
   const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
   const [selectedTransactions, setSelectedTransactions] = useState<string[]>([]);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
+  // Fetch transactions on mount
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        // In a real app, this would be an API call
+        const data = await fetchTransactions();
+        setTransactions(
+          data.map((transaction: any) => ({
+            id: transaction.id,
+            date: transaction.createdAt.split('T')[0],
+            amount: transaction.calculatedAmount,
+            currency: transaction.targetCurrency,
+            senderName: transaction.user.fullName,
+            senderAccount: transaction.user.accountNumber,
+            recipientName: transaction.recipientName,
+            recipientBank: transaction.recipientBankName,
+            recipientCountry: transaction.recipientCountry,
+            recipientSwift: transaction.recipientSwiftCode,
+            method: transaction.paymentMethod,
+            status: transaction.status,
+            reference: transaction.reference || 'N/A',
+          }))
+        );
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+        toast.error('Failed to load transactions');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchData();
+  }
+  , []);
+
   
   // Handle refresh
   const handleRefresh = () => {
