@@ -47,10 +47,10 @@ async function seedEmployee(
   // Password checks
   validatePassword(password);
 
-	const hashedAccount = crypto
+	const hashedAccount = /*crypto
 		.createHash("sha256")
 		.update(sanitizedAccount)
-		.digest("hex");
+		.digest("hex")*/ sanitizedAccount;
 
 	const encryptedId = utils.encryptWithAES(sanitizedId);
 
