@@ -3,7 +3,7 @@ import { useAuth } from '@/context/AuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_APP_BACKEND_URL || 'http://localhost:3000/api';
 
-export const fetchTransactions = async (userId: string) => {
+export const fetchTransactions = async () => {
   try {
     let token = '';// = localStorage.getItem('token');
 		if (localStorage.getItem('user')) {
@@ -32,3 +32,34 @@ export const fetchTransactions = async (userId: string) => {
     throw error;
   }
 };
+
+export const addTransaction = async (transactionData: any) => {
+  try {
+    let token = '';// = localStorage.getItem('token');
+    if (localStorage.getItem('user')) {
+      token = JSON.parse(localStorage.getItem('user')).authToken;
+    } else if (sessionStorage.getItem('user')) {
+      token = JSON.parse(sessionStorage.getItem('user')).authToken;
+    } else {
+      throw new Error('User not authenticated');
+    }
+    const response = await fetch(`${API_BASE_URL}/api/transaction`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(transactionData)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error adding transaction:', error);
+    throw error;
+  }
+}
