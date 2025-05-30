@@ -18,10 +18,10 @@ export const getUser = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: {
-        accountNumber: crypto
+        accountNumber: /*crypto
           .createHash("sha256")
           .update(accountNumber)
-          .digest("hex"),
+          .digest("hex")*/ utils.encryptWithAES(accountNumber),
       },
     });
 
@@ -105,11 +105,11 @@ export const addUser = async (req: Request, res: Response) => {
 
     // Step 12: Encrypt PII
     const encryptedIdNumber = utils.encryptWithAES(sanitizedData.idNumber);
-    const encryptedAccountNumber = crypto
-      .createHash("sha256")
-      .update(sanitizedData.accountNumber)
-      .digest("hex");
-    // const encryptedAccountNumber = utils.encryptWithAES(sanitizedData.accountNumber);
+    // const encryptedAccountNumber = crypto
+    //   .createHash("sha256")
+    //   .update(sanitizedData.accountNumber)
+    //   .digest("hex");
+    const encryptedAccountNumber = sanitizedData.accountNumber;
 
     const encryptedData = {
       fullName: sanitizedData.fullName,

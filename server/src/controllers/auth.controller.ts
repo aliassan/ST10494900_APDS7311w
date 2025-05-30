@@ -77,13 +77,14 @@ export const authenticateUser = async (req: Request, res: Response) => {
       return utils.errorResponse(401, "Get user error: Missing user address", res);
 
     console.log(`Getting user "${accountNumber}"...`);
+    console.log(`User encrypted account number: ${utils.encryptWithAES(accountNumber)}`);
 
     const user = await prisma.user.findUnique({
       where: {
-        accountNumber: crypto
+        accountNumber: /*crypto
           .createHash("sha256")
           .update(accountNumber)
-          .digest("hex"),
+          .digest("hex")*/ accountNumber,
       },
     });
 
@@ -105,7 +106,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
 
     //Create JWT with 15m expiry for the user and send to the fron-end
     const secretKey = process.env.SECRET_KEY as string;
-    const authToken = jwt.sign({ accountNumber }, secretKey, { expiresIn: "15m" });
+    const authToken = jwt.sign({ accountNumber, userId: user.id }, secretKey, { expiresIn: "15m" });
 
     res.status(200).json({
       ...decryptedUser,
