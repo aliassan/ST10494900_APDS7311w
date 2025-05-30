@@ -89,7 +89,7 @@ const formatCurrency = (amount: number, currency: string) => {
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
-  const [transactions, setTransactions] = useState(mockTransactions);
+  const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -103,9 +103,33 @@ const Dashboard: React.FC = () => {
   const loadTransactions = async () => {
     setIsLoading(true);
     setError(null);
+    const adaptStatus = (status: string) => {
+      switch (status) {
+        case 'pending':
+          return 'processing';
+        case 'verified':
+          return 'processing';
+        case 'rejected':
+          return 'failed';
+        default:
+          return 'unknown';
+      }
+    };
     try {
-      const data = await fetchTransactions(user.id);
-      setTransactions(data);
+      const data = await fetchTransactions();
+      console.log("Fetched transactions: ", data);
+      setTransactions(
+        data.map((transaction: any) => ({
+          id: transaction.id,
+          date: transaction.createdAt.split('T')[0], // Extract YYYY-MM-DD
+          amount: transaction.calculatedAmount,
+          currency: transaction.targetCurrency,
+          recipient: transaction.recipientName,
+          status: adaptStatus(transaction.status),
+          method: transaction.paymentMethod,
+          reference: transaction.reference,
+        }))
+      );
     } catch (err) {
       setError('Failed to load transactions. Please try again.');
       console.error(err);
