@@ -7,7 +7,7 @@ export const getTransactions = async (req: Request, res: Response) => {
   const accountNumber = (req as any).accountNumber;
   const { role } = req.query
 
-  console.log("accountNumber: ", accountNumber);
+  // console.log("accountNumber: ", accountNumber);
 
   try {
     //retrieve notification
@@ -24,7 +24,7 @@ export const getTransactions = async (req: Request, res: Response) => {
 
     if (user.isEmployee) {
       // If the user is an employee, return all transactions
-      console.log("User is an employee, fetching all transactions");
+      // console.log("User is an employee, fetching all transactions");
       const transactions = await prisma.transaction.findMany({
         include: {
           user: {
@@ -38,7 +38,7 @@ export const getTransactions = async (req: Request, res: Response) => {
           createdAt: 'desc'
         }
       });
-      console.log("transactions - employee: ", transactions);
+      // console.log("transactions - employee: ", transactions);
       res.status(200).json(
         transactions
       );
@@ -48,7 +48,7 @@ export const getTransactions = async (req: Request, res: Response) => {
           userId: user.id
         }
       })
-      console.log("transactions - customer: ", transactions);
+      // console.log("transactions - customer: ", transactions);
       res.status(200).json(transactions)
     }
   } catch (error) {
@@ -74,26 +74,9 @@ export const addTransaction = async (req: Request, res: Response) => {
 
     if (!user) return errorResponse(404, "User not found", res);
 
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-  
-    const todayEnd = new Date();
-    todayEnd.setHours(23, 59, 59, 999);
-  
-    // Get today's count
-    const count = await prisma.transaction.count({
-      where: {
-        createdAt: {
-          gte: todayStart,
-          lte: todayEnd,
-        },
-      },
-    });
-  
-    // Generate reference
-    const reference = `INV-${todayStart.toISOString().slice(0, 10).replace(/-/g, '')}-${String(count + 1).padStart(3, '0')}`;
-    console.log("Generated reference: ", reference);
-    console.log("transactionData: ", req.body);
+    // Generate random reference (INV-8RANDOM_CHARS)
+    const randomPart = Math.random().toString(36).slice(2, 10).toUpperCase();
+    const reference = `INV-${randomPart}`;
 
     const transaction = await prisma.transaction.create({
       data: {
@@ -105,6 +88,7 @@ export const addTransaction = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: "success"})
   } catch(error) {
+    console.error("Error adding transaction: ", error);
     return errorResponse(500, error, res)
   }
 };
