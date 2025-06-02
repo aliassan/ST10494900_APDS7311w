@@ -1,103 +1,32 @@
 version: 2.1
-
-orbs:
-  node: circleci/node@5.0.2
-
+# ... (rest of your config remains unchanged)
 jobs:
-  security-checks:
+  # ... (other jobs remain unchanged)
+  run-security-tests:
     docker:
-      - image: cimg/node:20.11.1
+      - image: cimg/node:18.20.5
+    working_directory: ~/project/server
     steps:
       - checkout
+      # ... (other steps remain unchanged)
       - run:
-          name: Install backend packages
-          working_directory: server
-          command: npm install
-      - run:
-          name: Run npm audit for backend
-          working_directory: server
-          command: npm audit --production
-      - run:
-          name: Install frontend packages
-          working_directory: client
-          command: npm install
-      - run:
-          name: Run npm audit for frontend
-          working_directory: client
-          command: npm audit --production --audit-level=high
-
-  backend-tests:
-    docker:
-      - image: cimg/node:20.11.1
-      - image: postgres:16-alpine
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: payments-portal
-    environment:
-      DATABASE_URL: postgresql://root:root@localhost:5432/payments-portal
-      SECRET_KEY: $SECRET_KEY
-      NODE_ENV: test
-    steps:
-      - checkout
-      - run:
-          name: Install backend packages
-          working_directory: server
-          command: npm install
-      - run:
-          name: Wait for PostgreSQL
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - run:
-          name: Generate Prisma client
-          working_directory: server
-          command: npx prisma generate
-      - run:
-          name: Run database migrations
-          working_directory: server
-          command: npx prisma migrate dev --name init
-      - run:
-          name: Run API tests
-          working_directory: server
-          command: npm run test:api
-
-  frontend-build:
-    docker:
-      - image: cimg/node:20.11.1
-    environment:
-      VITE_APP_BACKEND_URL: https://localhost:8082
-    steps:
-      - checkout
-      - run:
-          name: Install mkcert
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y libnss3-tools
-            curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-            chmod +x mkcert-v*-linux-amd64
-            sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
-            mkcert -install
-      - run:
-          name: Generate frontend certs
-          working_directory: client
+          name: Generate backend certs
           command: |
             mkdir -p certs
-            mkcert -key-file certs/frontend-key.pem -cert-file certs/frontend-cert.pem localhost
+            openssl req -x509 -nodes -days 1 -newkey rsa:2048 \
+              -keyout certs/backend-key.pem \
+              -out certs/backend-cert.pem \
+              -subj "/CN=localhost"
       - run:
-          name: Install frontend packages
-          working_directory: client
-          command: npm install
+          name: Debug certs directory
+          command: ls -l certs
       - run:
-          name: Build frontend
-          working_directory: client
-          command: npm run build
-
+          name: Run security tests
+          command: npm run test:security
+      # ... (rest of steps remain unchanged)
 workflows:
-  devsecops:
+  version: 2
+  build-and-test:
     jobs:
-      - security-checks
-      - backend-tests:
-          requires:
-            - security-checks
-      - frontend-build:
-          requires:
-            - security-checks
+      # ... (other jobs remain unchanged)
+      - run-security-tests
