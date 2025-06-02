@@ -1,5 +1,4 @@
 version: 2.1
-
 orbs:
   node: circleci/node@5.0.2
   sonarcloud: sonarsource/sonarcloud@3.0.0
@@ -10,6 +9,10 @@ jobs:
       - image: cimg/node:18.20.2
     steps:
       - checkout
+      - run:
+          name: Install SonarScanner
+          command: |
+            npm install -g sonar-scanner
       - run:
           name: Run SonarCloud Scan
           command: |
