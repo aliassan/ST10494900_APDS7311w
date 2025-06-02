@@ -49,8 +49,10 @@ jobs:
             chmod +x mkcert-v*-linux-amd64
             sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
             mkcert -install
-            mkdir -p certs
+            cd "$(pwd)"
+            mkdir -p server/certs
             mkcert -key-file server/certs/backend-key.pem -cert-file server/certs/backend-cert.pem localhost
+            ls -l server/certs/ client/certs/
       # - run:
       #     name: Generate backend certs
       #     working-directory: server
