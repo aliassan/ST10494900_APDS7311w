@@ -72,6 +72,21 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install mkcert
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y libnss3-tools
+            curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+            chmod +x mkcert-v*-linux-amd64
+            sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+            mkcert -install
+      - run:
+          name: Generate frontend certs
+          working_directory: client
+          command: |
+            mkdir -p certs
+            mkcert -key-file certs/frontend-key.pem -cert-file certs/frontend-cert.pem localhost
+      - run:
           name: Install frontend packages
           working_directory: client
           command: npm install
