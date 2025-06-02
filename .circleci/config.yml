@@ -6,7 +6,7 @@ orbs:
 jobs:
   security-checks:
     docker:
-      - image: cimg/node:18.16.0
+      - image: cimg/node:20.11.1
     steps:
       - checkout
       - run:
@@ -28,7 +28,7 @@ jobs:
 
   backend-tests:
     docker:
-      - image: cimg/node:18.16.0
+      - image: cimg/node:20.11.1
       - image: postgres:16-alpine
         environment:
           POSTGRES_USER: $POSTGRES_USER
@@ -66,7 +66,7 @@ jobs:
 
   frontend-build:
     docker:
-      - image: cimg/node:18.16.0
+      - image: cimg/node:20.11.1
     environment:
       VITE_APP_BACKEND_URL: https://localhost:8082
     steps:
