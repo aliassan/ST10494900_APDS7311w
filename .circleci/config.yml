@@ -85,8 +85,8 @@ jobs:
             echo "SECRET_KEY length: ${SECRET_KEY}" 
             npm run test:security
             npm run test:api
-          environment:
-            SECRET_KEY: ${SECRET_KEY}
+          # environment:
+          #   SECRET_KEY: ${SECRET_KEY}
       # - run:
       #     name: Run API tests
       #     working_directory: server
