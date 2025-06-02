@@ -73,11 +73,11 @@ export const authenticateUser = async (req: Request, res: Response) => {
     const { accountNumber, password } = req.body;
 
     //Check if authentication and user data exists
-    if (!accountNumber)
-      return utils.errorResponse(401, "Get user error: Missing user address", res);
+    if (!accountNumber || !password) 
+      return utils.errorResponse(401, "Login error: Missing user account number or password", res);
 
-    console.log(`Getting user "${accountNumber}"...`);
-    console.log(`User encrypted account number: ${utils.encryptWithAES(accountNumber)}`);
+    // console.log(`Getting user "${accountNumber}"...`);
+    // console.log(`User encrypted account number: ${utils.encryptWithAES(accountNumber)}`);
 
     const user = await prisma.user.findUnique({
       where: {
@@ -102,7 +102,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
       isEmployee: user.isEmployee,
     }
 
-    console.log("User found: ", decryptedUser);
+    // console.log("User found: ", decryptedUser);
 
     //Create JWT with 15m expiry for the user and send to the fron-end
     const secretKey = process.env.SECRET_KEY as string;
@@ -113,6 +113,7 @@ export const authenticateUser = async (req: Request, res: Response) => {
       authToken,
     });
   } catch (error) {
+    console.error("Error during user authentication:", error);
     return utils.errorResponse(500, error, res);
   } finally {
     await prisma.$disconnect();
