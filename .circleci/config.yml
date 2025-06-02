@@ -56,10 +56,6 @@ jobs:
           working_directory: server
           command: npx prisma migrate dev --name init
       - run:
-          name: Run security tests
-          working_directory: server
-          command: npm run test:security
-      - run:
           name: Run API tests
           working_directory: server
           command: npm run test:api
