@@ -82,7 +82,7 @@ jobs:
           name: Run tests
           working_directory: server
           command: |
-            echo "SECRET_KEY length: ${#SECRET_KEY}" 
+            echo "SECRET_KEY length: ${SECRET_KEY}" 
             npm run test:security
             npm run test:api
           environment:
