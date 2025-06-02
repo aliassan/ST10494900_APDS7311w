@@ -70,6 +70,10 @@ jobs:
           name: Run database migrations
           working_directory: server
           command: npx prisma migrate dev --name init
+      - run: # Debug certs directory
+          name: Debug certs directory
+          working_directory: server
+          command: ls -l certs
       - run:
           name: Run security tests
           working_directory: server
