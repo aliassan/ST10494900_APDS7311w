@@ -81,15 +81,17 @@ jobs:
       - run:
           name: Run security tests
           working_directory: server
-          command: npm run test:security
+          command: |
+            npm run test:security
+            npm run test:api
           environment:
             SECRET_KEY: ${SECRET_KEY}
-      - run:
-          name: Run API tests
-          working_directory: server
-          command: npm run test:api
-          environment:
-            SECRET_KEY: ${SECRET_KEY}
+      # - run:
+      #     name: Run API tests
+      #     working_directory: server
+      #     command: npm run test:api
+      #     environment:
+      #       SECRET_KEY: ${SECRET_KEY}
 
   frontend-build:
     docker:
