@@ -31,7 +31,8 @@
   },
   "exclude": [
     "test",
-    "vitest.config.unit.ts",
+    "vitest.config.security.ts",
+    "vitest.config.api.ts",
     "vitest.config.ts",
     "vitest.e2e.config.ts",
     "vitest.unit.config.ts",
