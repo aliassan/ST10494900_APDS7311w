@@ -118,7 +118,7 @@ export const addUser = async (req: Request, res: Response) => {
       passwordHash: passwordHash
     }
 
-    console.log("Sanitized & Encrypted Data: ", { ...encryptedData });
+    // console.log("Sanitized & Encrypted Data: ", { ...encryptedData });
 
     // Step 13: Store Data
     const newUser = await prisma.user.create({
@@ -138,12 +138,13 @@ export const addUser = async (req: Request, res: Response) => {
     //   isEmployee: newUser.isEmployee,
     //   createdAt: newUser.createdAt
     // };
-    console.log("User created: ", newUser);
+    // console.log("User created: ", newUser);
 
     res.status(200).json({
       message: "User added successfully"
     });
   } catch (error) {
+    console.error("Error adding user:", error);
     return utils.errorResponse(500, error, res);
   } finally {
     await prisma.$disconnect();
