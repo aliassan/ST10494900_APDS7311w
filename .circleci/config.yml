@@ -2,79 +2,97 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.0.2
-  #postgres: circleci/postgres@2.0.0
 
 jobs:
   security-checks:
     docker:
-      - image: cimg/node:18.16.0
+      - image: cimg/node:20.11.1
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
-          working-directory: server
+      - run:
+          name: Install backend packages
+          working_directory: server
+          command: npm install
       - run:
           name: Run npm audit for backend
-          working-directory: server
+          working_directory: server
           command: npm audit --production
-      - node/install-packages:
-          pkg-manager: npm
-          working-directory: client
+      - run:
+          name: Install frontend packages
+          working_directory: client
+          command: npm install
       - run:
           name: Run npm audit for frontend
-          working-directory: client
+          working_directory: client
           command: npm audit --production --audit-level=high
 
   backend-tests:
     docker:
-      - image: cimg/node:18.16.0
+      - image: cimg/node:20.11.1
       - image: postgres:16-alpine
         environment:
-          POSTGRES_USER: $POSTGRES_USER
-          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
           POSTGRES_DB: payments-portal
     environment:
-      DATABASE_URL: $DATABASE_URL
+      DATABASE_URL: postgresql://root:root@localhost:5432/payments-portal
       SECRET_KEY: $SECRET_KEY
       NODE_ENV: test
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
-          working-directory: server
+      - run:
+          name: Install backend packages
+          working_directory: server
+          command: npm install
       - run:
           name: Wait for PostgreSQL
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run:
           name: Generate Prisma client
-          working-directory: server
+          working_directory: server
           command: npx prisma generate
       - run:
           name: Run database migrations
-          working-directory: server
+          working_directory: server
           command: npx prisma migrate dev --name init
       - run:
           name: Run security tests
-          working-directory: server
+          working_directory: server
           command: npm run test:security
       - run:
           name: Run API tests
-          working-directory: server
+          working_directory: server
           command: npm run test:api
 
   frontend-build:
     docker:
-      - image: cimg/node:18.16.0
+      - image: cimg/node:20.11.1
     environment:
       VITE_APP_BACKEND_URL: https://localhost:8082
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
-          working-directory: client
+      - run:
+          name: Install mkcert
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y libnss3-tools
+            curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+            chmod +x mkcert-v*-linux-amd64
+            sudo mv mkcert-v*-linux-amd64 /usr/local/bin/mkcert
+            mkcert -install
+      - run:
+          name: Generate frontend certs
+          working_directory: client
+          command: |
+            mkdir -p certs
+            mkcert -key-file certs/frontend-key.pem -cert-file certs/frontend-cert.pem localhost
+      - run:
+          name: Install frontend packages
+          working_directory: client
+          command: npm install
       - run:
           name: Build frontend
-          working-directory: client
+          working_directory: client
           command: npm run build
 
 workflows:
