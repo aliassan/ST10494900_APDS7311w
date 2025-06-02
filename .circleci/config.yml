@@ -30,12 +30,12 @@ jobs:
     docker:
       - image: cimg/node:20.11.1
       - image: postgres:16-alpine
-        # environment:
-        #   POSTGRES_USER: root
-        #   POSTGRES_PASSWORD: root
-        #   POSTGRES_DB: payments-portal
+        environment:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: payments-portal
     environment:
-      # DATABASE_URL: postgresql://root:root@localhost:5432/payments-portal
+      DATABASE_URL: postgresql://root:root@localhost:5432/payments-portal
       NODE_ENV: test
     steps:
       - checkout
