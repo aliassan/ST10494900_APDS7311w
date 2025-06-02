@@ -1,0 +1,89 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+  postgres: circleci/postgres@2.0.0
+
+jobs:
+  security-checks:
+    docker:
+      - image: cimg/node:18.16.0
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+          working-directory: server
+      - run:
+          name: Run npm audit for backend
+          working-directory: server
+          command: npm audit --production
+      - node/install-packages:
+          pkg-manager: npm
+          working-directory: client
+      - run:
+          name: Run npm audit for frontend
+          working-directory: client
+          command: npm audit --production --audit-level=high
+
+  backend-tests:
+    docker:
+      - image: cimg/node:18.16.0
+      - image: postgres:16-alpine
+        environment:
+          POSTGRES_USER: $POSTGRES_USER
+          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+          POSTGRES_DB: payments-portal
+    environment:
+      DATABASE_URL: $DATABASE_URL
+      SECRET_KEY: $SECRET_KEY
+      NODE_ENV: test
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+          working-directory: server
+      - run:
+          name: Wait for PostgreSQL
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Generate Prisma client
+          working-directory: server
+          command: npx prisma generate
+      - run:
+          name: Run database migrations
+          working-directory: server
+          command: npx prisma migrate dev --name init
+      - run:
+          name: Run security tests
+          working-directory: server
+          command: npm run test:security
+      - run:
+          name: Run API tests
+          working-directory: server
+          command: npm run test:api
+
+  frontend-build:
+    docker:
+      - image: cimg/node:18.16.0
+    environment:
+      VITE_APP_BACKEND_URL: https://localhost:8082
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+          working-directory: client
+      - run:
+          name: Build frontend
+          working-directory: client
+          command: npm run build
+
+workflows:
+  devsecops:
+    jobs:
+      - security-checks
+      - backend-tests:
+          requires:
+            - security-checks
+      - frontend-build:
+          requires:
+            - security-checks
