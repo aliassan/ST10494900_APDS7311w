@@ -40,6 +40,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { addTransaction } from '@/services/transactionService';
 
 // Mock exchange rates
 const exchangeRates = {
@@ -186,17 +187,45 @@ const PaymentForm: React.FC = () => {
   };
   
   // Handle form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateStep(currentStep)) return;
     
     setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    const transactionData = {
+      amount: parseFloat(amount),
+      sourceCurrency,
+      targetCurrency,
+      paymentMethod,
+      recipientName,
+      recipientAccountNumber,
+      recipientBankName,
+      recipientSwiftCode,
+      recipientCountry,
+      recipientCity,
+      recipientAddress,
+      calculatedAmount
+    }
+
+    try {
+      // Call the service to add the transaction
+      await addTransaction(transactionData);
       toast.success('Payment submitted successfully!');
       navigate('/dashboard');
-    }, 2000);
+    } catch (error) {
+      console.error('Error submitting payment:', error);
+      toast.error('Failed to submit payment. Please try again.');
+      return;
+    } finally {
+      setIsSubmitting(false);
+    }
+    
+    // Simulate API call
+    // setTimeout(() => {
+    //   setIsSubmitting(false);
+    //   toast.success('Payment submitted successfully!');
+    //   navigate('/dashboard');
+    // }, 2000);
   };
   
   return (

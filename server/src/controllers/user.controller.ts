@@ -18,10 +18,10 @@ export const getUser = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: {
-        accountNumber: crypto
+        accountNumber: /*crypto
           .createHash("sha256")
           .update(accountNumber)
-          .digest("hex"),
+          .digest("hex")*/ utils.encryptWithAES(accountNumber),
       },
     });
 
@@ -105,11 +105,11 @@ export const addUser = async (req: Request, res: Response) => {
 
     // Step 12: Encrypt PII
     const encryptedIdNumber = utils.encryptWithAES(sanitizedData.idNumber);
-    const encryptedAccountNumber = crypto
-      .createHash("sha256")
-      .update(sanitizedData.accountNumber)
-      .digest("hex");
-    // const encryptedAccountNumber = utils.encryptWithAES(sanitizedData.accountNumber);
+    // const encryptedAccountNumber = crypto
+    //   .createHash("sha256")
+    //   .update(sanitizedData.accountNumber)
+    //   .digest("hex");
+    const encryptedAccountNumber = sanitizedData.accountNumber;
 
     const encryptedData = {
       fullName: sanitizedData.fullName,
@@ -118,14 +118,7 @@ export const addUser = async (req: Request, res: Response) => {
       passwordHash: passwordHash
     }
 
-    console.log("Sanitized & Encrypted Data: ", { ...encryptedData });
-
-    console.log("Decrypted Data: ", {
-      fullName: encryptedData.fullName,
-      accountNumber: encryptedData.accountNumber,
-      idNumber: utils.decryptWithAES(encryptedData.idNumber),
-      passwordHash: bcrypt.compareSync(sanitizedData.password, encryptedData.passwordHash)
-    })
+    // console.log("Sanitized & Encrypted Data: ", { ...encryptedData });
 
     // Step 13: Store Data
     const newUser = await prisma.user.create({
@@ -145,12 +138,13 @@ export const addUser = async (req: Request, res: Response) => {
     //   isEmployee: newUser.isEmployee,
     //   createdAt: newUser.createdAt
     // };
-    console.log("User created: ", newUser);
+    // console.log("User created: ", newUser);
 
     res.status(200).json({
       message: "User added successfully"
     });
   } catch (error) {
+    console.error("Error adding user:", error);
     return utils.errorResponse(500, error, res);
   } finally {
     await prisma.$disconnect();

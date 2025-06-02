@@ -19,22 +19,6 @@ export function encryptWithAES(plaintext: string): string {
   }
   if (!plaintext) return plaintext;
 
-  // const iv = crypto.randomBytes(IV_LENGTH);
-  // const key = Buffer.from(ENCRYPTION_KEY, 'hex');
-
-  // const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
-  // const encrypted = Buffer.concat([
-  //   cipher.update(plaintext, 'utf8'),
-  //   cipher.final()
-  // ]);
-  // const tag = cipher.getAuthTag();
-
-  // console.log('iv.length: ', iv.length);
-  // console.log('tag.length: ', tag.length);
-  // console.log('ecrypted.length: ', encrypted.length);
-
-  // // Combine iv + tag + encrypted
-  // return Buffer.concat([iv, tag, encrypted]).toString('base64');
   const iv = crypto.randomBytes(IV_LENGTH);
   const salt = crypto.randomBytes(SALT_LENGTH);
 
@@ -61,27 +45,6 @@ export function decryptWithAES(ciphertext: string): string {
   if (!ciphertext) return ciphertext;
 
   try {
-    // console.log('ciphertext: ', ciphertext);
-    // const data = Buffer.from(ciphertext, 'base64');
-
-    // const iv = data.subarray(0, IV_LENGTH);
-    // const tag = data.subarray(IV_LENGTH, IV_LENGTH + 16);
-    // const encrypted = data.subarray(IV_LENGTH + 16);
-
-    // console.log('iv.length[decrypt]: ', iv.length);
-    // console.log('tag.length[decrypt]: ', tag.length);
-    // console.log('ecrypted.length[decrypt]: ', encrypted.length);
-  
-    // const key = Buffer.from(ENCRYPTION_KEY, 'hex');
-  
-    // const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
-    // decipher.setAuthTag(tag);
-  
-    // const decrypted = Buffer.concat([
-    //   decipher.update(encrypted),
-    //   decipher.final()
-    // ]);
-  
     // return decrypted.toString('utf8');
     const buffer = Buffer.from(ciphertext, 'base64');
   
@@ -105,7 +68,7 @@ export function decryptWithAES(ciphertext: string): string {
   }
 }
 
-// Custom validation for ID number (adjust according to your country's ID format)
+// Custom validation for ID number
 export function validateIdNumber(idNumber: string): boolean {
   if (!idNumber || typeof idNumber !== 'string') return false;
   
@@ -114,10 +77,6 @@ export function validateIdNumber(idNumber: string): boolean {
   
   // Should contain only numbers (for most countries)
   if (!/^[A-Za-z0-9]{8,20}$/.test(idNumber)) return false;
-  
-  // Add country-specific validation logic here
-  // For example, South Africa ID number validation:
-  // return validateSAIDNumber(idNumber);
   
   return true;
 }
