@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.0.2
-  postgres: circleci/postgres@2.0.0
+  #postgres: circleci/postgres@2.0.0
 
 jobs:
   security-checks:
