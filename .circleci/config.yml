@@ -10,7 +10,7 @@ jobs:
       - image: cimg/node:20.11.1
     steps:
       - checkout
-      #Add sonarcloud orb for security analysis
+      #Add sonarcloud orb for security analysis!
       - sonarcloud/scan
       - run:
           name: Install backend packages
