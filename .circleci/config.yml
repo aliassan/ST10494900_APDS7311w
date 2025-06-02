@@ -30,13 +30,12 @@ jobs:
     docker:
       - image: cimg/node:20.11.1
       - image: postgres:16-alpine
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: payments-portal
+        # environment:
+        #   POSTGRES_USER: root
+        #   POSTGRES_PASSWORD: root
+        #   POSTGRES_DB: payments-portal
     environment:
-      DATABASE_URL: postgresql://root:root@localhost:5432/payments-portal
-      # SECRET_KEY: $SECRET_KEY
+      # DATABASE_URL: postgresql://root:root@localhost:5432/payments-portal
       NODE_ENV: test
     steps:
       - checkout
@@ -53,12 +52,6 @@ jobs:
             mkdir -p server/certs
             mkcert -key-file server/certs/backend-key.pem -cert-file server/certs/backend-cert.pem localhost
             ls -l server/certs/
-      # - run:
-      #     name: Generate backend certs
-      #     working-directory: server
-      #     command: |
-      #       mkdir -p certs
-      #       mkcert -key-file certs/backend-key.pem -cert-file certs/backend-cert.pem localhost
       - run:
           name: Install backend packages
           working_directory: server
@@ -82,14 +75,10 @@ jobs:
           name: Run security tests
           working_directory: server
           command: npm run test:security
-          # environment:
-          #   SECRET_KEY: ${SECRET_KEY}
       - run:
           name: Run API tests
           working_directory: server
           command: npm run test:api
-      #     environment:
-      #       SECRET_KEY: ${SECRET_KEY}
 
   frontend-build:
     docker:
