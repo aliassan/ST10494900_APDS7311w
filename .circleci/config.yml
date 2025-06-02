@@ -79,7 +79,7 @@ jobs:
           working_directory: server
           command: ls -l certs
       - run:
-          name: Run security tests
+          name: Run tests
           working_directory: server
           command: |
             npm run test:security
