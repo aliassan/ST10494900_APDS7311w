@@ -52,7 +52,7 @@ jobs:
             cd "$(pwd)"
             mkdir -p server/certs
             mkcert -key-file server/certs/backend-key.pem -cert-file server/certs/backend-cert.pem localhost
-            ls -l server/certs/ client/certs/
+            ls -l server/certs/
       # - run:
       #     name: Generate backend certs
       #     working-directory: server
