@@ -19,6 +19,7 @@ const path = require("path");
 
 class Server {
   private static instance: Server | undefined;
+  private httpsServer?: https.Server; // Add this property
   private app: Express;
   private paths: { [key: string]: string };
   private port: number;
@@ -111,9 +112,11 @@ class Server {
   }
 
   public listen() {
-    https.createServer(httpsOptions, this.app).listen(this.port, () => {
+    this.httpsServer = https.createServer(httpsOptions, this.app).listen(this.port, () => {
       console.log(`helloworld: listening on port ${this.port}`);
     });
+
+    return this.httpsServer;
   }
 
   public static getInstance() {
