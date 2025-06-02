@@ -14,6 +14,10 @@ jobs:
           command: |
             npm install sonar-scanner --save-dev
       - run:
+          name: Fix SonarScanner Permissions
+          command: |
+            chmod +x ./node_modules/sonar-scanner/bin/sonar-scanner
+      - run:
           name: Run SonarCloud Scan
           command: |
             npx sonar-scanner \
