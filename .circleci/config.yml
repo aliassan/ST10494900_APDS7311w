@@ -11,8 +11,7 @@ jobs:
     steps:
       - checkout
       #Add sonarcloud orb for security analysis
-      - sonarcloud/setup:  # Initialize Sonar scanner
-          organization: "ali-assan"  # Replace with your org name
+      - sonarcloud/scan
       - run:
           name: Install backend packages
           working_directory: server
