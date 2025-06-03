@@ -12,10 +12,11 @@ jobs:
       - checkout
       #Add sonarcloud orb for security analysis
       - sonarcloud/scan:
-          organization: "aliassan"
-          projectKey: "aliassan_ST10494900_APDS7311w"
-          nodeVersion: "20"
-          exclusions: "**/test/**,**/node_modules/**"
+          project-key: "aliassan_ST10494900_APDS7311w"
+          additional-properties: |
+            sonar.organization=aliassan
+            sonar.sources=.
+            sonar.javascript.node.version=20
       - run:
           name: Install backend packages
           working_directory: server
