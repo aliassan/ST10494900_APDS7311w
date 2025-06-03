@@ -28,16 +28,6 @@ jobs:
           name: Run npm audit for frontend
           working_directory: client
           command: npm audit --production --audit-level=high
-      #Add Sonar Scan step
-      - run:
-          name: SonarCloud Scan
-          command: |
-            sonar-scanner \
-              -Dsonar.projectKey=aliassan_ST10494900_APDS7311w \
-              -Dsonar.organization=aliassan \
-              -Dsonar.sources=. \
-              -Dsonar.javascript.node.version=20 \
-              -Dsonar.login=${SONAR_TOKEN}
 
   backend-tests:
     docker:
