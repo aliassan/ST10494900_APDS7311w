@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   node: circleci/node@5.0.2
+  sonarcloud: sonarsource/sonarcloud@3.0.0
 
 jobs:
   security-checks:
@@ -9,6 +10,8 @@ jobs:
       - image: cimg/node:20.11.1
     steps:
       - checkout
+      #Add sonarcloud orb for security analysis
+      - sonarcloud/scan
       - run:
           name: Install backend packages
           working_directory: server
