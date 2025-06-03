@@ -16,7 +16,7 @@ jobs:
       - run:
           name: Fix SonarScanner Permissions
           command: |
-            chmod +x ./node_modules/sonar-scanner/bin/sonar-scanner
+            chmod -R +x ./node_modules/sonar-scanner/bin
       - run:
           name: Run SonarCloud Scan
           command: |
